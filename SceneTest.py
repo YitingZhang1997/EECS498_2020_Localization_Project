@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
     ######################## Load a GoForwardDynamicRobot with a IMU sensor ########################
     ########################               Use EKF to predict               ########################
-    # goforwardrobot = robotType.GoForwardDynamicRobot(robot, [-6, -2, 0], sensor=IMU)
+    # goforwardrobot = robotType.GoForwardDynamicRobot(robot, [-6, 2, 0], sensor=IMU)
     # goforwardrobot.update(env, handles)
     # ekf = EKF(goforwardrobot)
     # for ii in range(goforwardDynamicinputs.shape[0]):

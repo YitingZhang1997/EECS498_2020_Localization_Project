@@ -91,15 +91,15 @@ class LandMark(Sensor):
         ## Sensor function
         xl = self.LandMarkLocation[self.index, 0]
         yl = self.LandMarkLocation[self.index, 1]
-        return array([sqrt((xl - x[0])**2 + (xl - x[1])**2),
+        return array([sqrt((xl - x[0])**2 + (yl - x[1])**2),
                       math.atan2(x[1] - yl, x[0] - xl)])
 
     def H(self, x):
         ## Linearized sensor function
         xl = self.LandMarkLocation[self.index, 0]
         yl = self.LandMarkLocation[self.index, 1]
-        return array([[(x[0] - xl)/sqrt((xl - x[0])**2 + (xl - x[1])**2), (x[1] - yl)/sqrt((xl - x[0])**2 + (xl - x[1])**2), 0],
-                      [(x[1] - yl)/((xl - x[0])**2 + (xl - x[1])**2), (x[0] - xl)/((xl - x[0])**2 + (xl - x[1])**2), 0]])
+        return array([[(x[0] - xl)/sqrt((xl - x[0])**2 + (yl - x[1])**2), (x[1] - yl)/sqrt((xl - x[0])**2 + (yl - x[1])**2), 0],
+                      [-(x[1] - yl)/((xl - x[0])**2 + (yl - x[1])**2), (x[0] - xl)/((xl - x[0])**2 + (yl - x[1])**2), 0]])
 
     def observe(self):
         xl = self.LandMarkLocation[self.index, 0]
