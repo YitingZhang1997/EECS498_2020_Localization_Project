@@ -25,11 +25,11 @@ if __name__ == "__main__":
 
     handles = []
     # load a scene from ProjectRoom environment XML file
-    # env_path = os.path.join(path, "data/testScene.env.xml")
+    # env_path = os.path.join(path, "map/testScene.env.xml")
 
     # test a scene with barriers
-    # env_path = os.path.join(path, "data/testSceneWithBarrier.env.xml")
-    env_path = os.path.join(path, "data/roomScene.env.xml")
+    env_path = os.path.join(path, "map/testSceneWithLandMark.env.xml")
+    # env_path = os.path.join(path, "map/roomScene.env.xml")
     env.Load(env_path)
 
     robot = env.GetRobots()[0]
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     # simplerobot = robotType.SimpleDynamicRobot(robot, [-6, -2, 0], sensor=GPS)
     # simplerobot.update(env, handles)
     # kf = KF(simplerobot)
-    
+    #
     # for ii in range(simpleDynamicinputs.shape[0]):
     #     simplerobot.input = simpleDynamicinputs[ii, :]
     #     simplerobot.predict(env)
@@ -48,18 +48,30 @@ if __name__ == "__main__":
     #     kf.update(env, handles)
     #     time.sleep(0.05)
 
+    ##################### Load a simpleDynamicRobot with a LandMark sensor  #####################
+    ####################          Use ExtendedKalmanFilter to predict        ####################
+    simplerobot = robotType.SimpleDynamicRobot(robot, [-6, -2, 0], sensor=LandMark)
+    simplerobot.update(env, handles)
+    ekf = EKF(simplerobot)
+
+    for ii in range(simpleDynamicinputs.shape[0]):
+        simplerobot.input = simpleDynamicinputs[ii, :]
+        simplerobot.predict(env)
+        simplerobot.update(env, handles)
+        ekf.update(env, handles)
+        time.sleep(0.05)
+
     ######################## Load a GoForwardDynamicRobot with a IMU sensor ########################
     ########################               Use EKF to predict               ########################
     # goforwardrobot = robotType.GoForwardDynamicRobot(robot, [-6, -2, 0], sensor=IMU)
-    goforwardrobot = robotType.GoForwardDynamicRobot(robot, [1, 0, 0], sensor=IMU)
-    goforwardrobot.update(env, handles)
-    ekf = EKF(goforwardrobot)
-    for ii in range(goforwardDynamicinputs.shape[0]):
-        goforwardrobot.input = goforwardDynamicinputs[ii, :]
-        goforwardrobot.predict(env)
-        goforwardrobot.update(env, handles)
-        ekf.update(env, handles)
-        time.sleep(0.05)
+    # goforwardrobot.update(env, handles)
+    # ekf = EKF(goforwardrobot)
+    # for ii in range(goforwardDynamicinputs.shape[0]):
+    #     goforwardrobot.input = goforwardDynamicinputs[ii, :]
+    #     goforwardrobot.predict(env)
+    #     goforwardrobot.update(env, handles)
+    #     ekf.update(env, handles)
+    #     time.sleep(0.05)
 
 
     raw_input("Press enter to exit...")

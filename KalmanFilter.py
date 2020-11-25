@@ -8,7 +8,8 @@ class KF(object):
         self.A = self.robotType.A
         self.B = self.robotType.B
         self.C = self.robotType.sensor.C
-        self.mu = self.robotType.observation
+        # self.mu = self.robotType.state
+        self.mu = np.random.rand(3)
         self.Sigma = np.eye(self.mu.size)
 
     def update(self, env, handles):
@@ -41,7 +42,8 @@ class EKF(object):
         self.G = self.robotType.G
         self.h = self.robotType.sensor.h
         self.H = self.robotType.sensor.H
-        self.mu = self.robotType.observation
+        # self.mu = self.robotType.state
+        self.mu = np.random.rand(3)
         self.Sigma = np.eye(self.mu.size)
 
     def update(self, env, handles):
