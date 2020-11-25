@@ -28,24 +28,25 @@ def initRobot(env, robot):
     robot.SetTransform(T)
     
 
-simpleDynamicinputs1 = repeat(array([[0.1, 0, 0]]), 60, axis = 0)
-simpleDynamicinputs2 = repeat(array([[0, 0.1, 0]]), 100, axis = 0)
-simpleDynamicinputs3 = repeat(array([[-0.1, 0, 0]]), 60, axis = 0)
-simpleDynamicinputs4 = repeat(array([[0, -0.1, 0]]), 100, axis = 0)
-simpleDynamicinputs = simpleDynamicinputs1
+simpleDynamicinputs0 = repeat(array([[0.1, 0, 0]]), 20, axis = 0)
+simpleDynamicinputs1 = repeat(array([[0.1, 0, 0]]), 80, axis = 0)
+simpleDynamicinputs2 = repeat(array([[0, 0.1, 0]]), 60, axis = 0)
+simpleDynamicinputs3 = repeat(array([[-0.1, 0, 0]]), 80, axis = 0)
+simpleDynamicinputs4 = repeat(array([[0, -0.1, 0]]), 60, axis = 0)
+simpleDynamicinputs = simpleDynamicinputs0
 for _ in range(5):
+    simpleDynamicinputs = numpy.append(simpleDynamicinputs, simpleDynamicinputs1, axis = 0)
     simpleDynamicinputs = numpy.append(simpleDynamicinputs, simpleDynamicinputs2, axis = 0)
     simpleDynamicinputs = numpy.append(simpleDynamicinputs, simpleDynamicinputs3, axis = 0)
     simpleDynamicinputs = numpy.append(simpleDynamicinputs, simpleDynamicinputs4, axis = 0)
-    simpleDynamicinputs = numpy.append(simpleDynamicinputs, simpleDynamicinputs1, axis = 0)
 
 
 
-goforwardDynamicinputs1 = repeat(array([[0.1, 0]]), 40, axis = 0)
+goforwardDynamicinputs1 = repeat(array([[0.1, 0]]), 60, axis = 0)
 goforwardDynamicinputs2 = repeat(array([[0.0628319, 0.0314159]]), 50, axis = 0)
 goforwardDynamicinputs3 = repeat(array([[0.1, 0]]), 60, axis = 0)
-goforwardDynamicinputs4 = repeat(array([[0.1, 0]]), 20, axis = 0)
-goforwardDynamicinputs5 = repeat(array([[0.1, 0]]), 80, axis = 0)
+goforwardDynamicinputs4 = repeat(array([[0.1, 0]]), 60, axis = 0)
+goforwardDynamicinputs5 = repeat(array([[0.1, 0]]), 60, axis = 0)
 goforwardDynamicinputs = numpy.append(goforwardDynamicinputs1, goforwardDynamicinputs2, axis = 0)
 for _ in range(15):
     goforwardDynamicinputs = numpy.append(goforwardDynamicinputs, goforwardDynamicinputs3, axis = 0)

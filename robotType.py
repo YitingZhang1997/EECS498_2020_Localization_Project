@@ -12,7 +12,7 @@ class Robot(object):
         # sensor is a Sensor type, could be GPS, IMU....
         ###
         self.robot = robot
-        self.state = state 
+        self.state = state
         self.sensor = sensor(self.robot)
         self.observation = self.sensor.observe()
 
@@ -44,15 +44,45 @@ class SimpleDynamicRobot(Robot):
     def __init__(self, robot, state, sensor = GPS):
         Robot.__init__(self, robot, state, sensor)
         self.input = array([0, 0, 0])
-        self.R = array([[2.5e-3, 1.8e-5, 1.8e-6], 
-                        [1.8e-5, 2.5e-3, 1.8e-6], 
+        self.R = array([[2.5e-3, 1.8e-5, 1.8e-6],
+                        [1.8e-5, 2.5e-3, 1.8e-6],
                         [1.8e-6, 1.8e-6, 2.5e-4]])
         self.A = eye(3)
         self.B = eye(3)
-    def predict(self):
+    def predict(self, env):
         prediction_noise = random.multivariate_normal((0, 0, 0), self.R)
-        self.state = self.state + self.input + prediction_noise
-    
+        # add check collision
+        # self.state = self.state + self.input + prediction_noise
+        temp_input = self.input.copy()
+        temp_state = self.state + temp_input + prediction_noise
+        T = array([[cos(temp_state[2]), -sin(temp_state[2]), 0, temp_state[0]],
+                       [sin(temp_state[2]), cos(temp_state[2]), 0, temp_state[1]],
+                       [0, 0, 1, 0.05],
+                       [0, 0, 0, 1]])
+        self.robot.SetTransform(T)
+        collision = env.CheckCollision(self.robot)
+        TurnRight = True
+        while collision:
+            if TurnRight:
+                Rot = array([[0, 1, 0],
+                           [-1, 0, 0],
+                           [0, 0, 1]])
+            else:
+                Rot = array([[0, -1, 0],
+                           [1, 0, 0],
+                           [0, 0, 1]])
+            temp_input = 2 * dot(Rot, self.input)
+            temp_state = self.state + temp_input + prediction_noise
+            T = array([[cos(temp_state[2]), -sin(temp_state[2]), 0, temp_state[0]],
+                       [sin(temp_state[2]), cos(temp_state[2]), 0, temp_state[1]],
+                       [0, 0, 1, 0.05],
+                       [0, 0, 0, 1]])
+            self.robot.SetTransform(T)
+            collision = env.CheckCollision(self.robot)
+            if collision and TurnRight:
+                TurnRight = False
+        self.state = temp_state
+
 class GoForwardDynamicRobot(Robot):
     ###
     # A robot class, could only go directly
@@ -60,13 +90,13 @@ class GoForwardDynamicRobot(Robot):
     def __init__(self, robot, state, sensor = GPS):
         Robot.__init__(self, robot, state, sensor)
         self.input = array([0, 0])
-        self.R = array([[2.5e-3, 1.8e-5, 1.8e-6], 
-                        [1.8e-5, 2.5e-3, 1.8e-6], 
+        self.R = array([[2.5e-3, 1.8e-5, 1.8e-6],
+                        [1.8e-5, 2.5e-3, 1.8e-6],
                         [1.8e-6, 1.8e-6, 2.5e-4]])
         def g(u, x):
             ## Dynamic function
-            return array([x[0] + u[0] * cos(x[2]), 
-                          x[1] + u[0] * sin(x[2]), 
+            return array([x[0] + u[0] * cos(x[2]),
+                          x[1] + u[0] * sin(x[2]),
                           x[2] + u[1]])
         self.g = g
 
