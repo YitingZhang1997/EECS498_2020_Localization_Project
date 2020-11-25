@@ -42,15 +42,14 @@ for _ in range(5):
 
 
 
-goforwardDynamicinputs1 = repeat(array([[0.1, 0]]), 60, axis = 0)
-goforwardDynamicinputs2 = repeat(array([[0.0628319, 0.0314159]]), 50, axis = 0)
-goforwardDynamicinputs3 = repeat(array([[0.1, 0]]), 60, axis = 0)
-goforwardDynamicinputs4 = repeat(array([[0.1, 0]]), 60, axis = 0)
-goforwardDynamicinputs5 = repeat(array([[0.1, 0]]), 60, axis = 0)
-goforwardDynamicinputs = numpy.append(goforwardDynamicinputs1, goforwardDynamicinputs2, axis = 0)
-for _ in range(15):
+goforwardDynamicinputs0 = repeat(array([[0.1, 0]]), 20, axis = 0)
+goforwardDynamicinputs1 = repeat(array([[0.0628319, 0.0314159]]), 50, axis = 0)
+goforwardDynamicinputs2 = repeat(array([[0.1, 0]]), 80, axis = 0)
+goforwardDynamicinputs3 = repeat(array([[0.1, 0]]), 40, axis = 0)
+goforwardDynamicinputs = goforwardDynamicinputs0
+for _ in range(10):
+    goforwardDynamicinputs = numpy.append(goforwardDynamicinputs, goforwardDynamicinputs2, axis = 0)
+    goforwardDynamicinputs = numpy.append(goforwardDynamicinputs, goforwardDynamicinputs1, axis = 0)
     goforwardDynamicinputs = numpy.append(goforwardDynamicinputs, goforwardDynamicinputs3, axis = 0)
-    goforwardDynamicinputs = numpy.append(goforwardDynamicinputs, goforwardDynamicinputs2, axis = 0)
-    goforwardDynamicinputs = numpy.append(goforwardDynamicinputs, goforwardDynamicinputs4, axis = 0)
-    goforwardDynamicinputs = numpy.append(goforwardDynamicinputs, goforwardDynamicinputs2, axis = 0)
-goforwardDynamicinputs = numpy.append(goforwardDynamicinputs, goforwardDynamicinputs5, axis = 0)
+    goforwardDynamicinputs = numpy.append(goforwardDynamicinputs, goforwardDynamicinputs1, axis = 0)
+# goforwardDynamicinputs = numpy.append(goforwardDynamicinputs, goforwardDynamicinputs5, axis = 0)

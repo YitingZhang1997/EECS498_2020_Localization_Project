@@ -36,28 +36,28 @@ if __name__ == "__main__":
 
     ######################## Load a simpleDynamicRobot with a GPS sensor ########################
     ########################          Use KalmanFilter to predict        ########################
-    simplerobot = robotType.SimpleDynamicRobot(robot, [-6, -2, 0], sensor=GPS)
-    simplerobot.update(env, handles)
-    kf = KF(simplerobot)
-
-    for ii in range(simpleDynamicinputs.shape[0]):
-        simplerobot.input = simpleDynamicinputs[ii, :]
-        simplerobot.predict(env)
-        simplerobot.update(env, handles)
-        kf.update(env, handles)
-        time.sleep(0.05)
+    # simplerobot = robotType.SimpleDynamicRobot(robot, [-6, -2, 0], sensor=GPS)
+    # simplerobot.update(env, handles)
+    # kf = KF(simplerobot)
+    #
+    # for ii in range(simpleDynamicinputs.shape[0]):
+    #     simplerobot.input = simpleDynamicinputs[ii, :]
+    #     simplerobot.predict(env)
+    #     simplerobot.update(env, handles)
+    #     kf.update(env, handles)
+    #     time.sleep(0.05)
 
     ######################## Load a GoForwardDynamicRobot with a IMU sensor ########################
     ########################               Use EKF to predict               ########################
-    # goforwardrobot = robotType.GoForwardDynamicRobot(robot, [-3, -5, 0], sensor=IMU)
-    # goforwardrobot.update(env, handles)
-    # ekf = EKF(goforwardrobot)
-    # for ii in range(goforwardDynamicinputs.shape[0]):
-    #     goforwardrobot.input = goforwardDynamicinputs[ii, :]
-    #     goforwardrobot.predict()
-    #     goforwardrobot.update(env, handles)
-    #     ekf.update(env, handles)
-    #     time.sleep(0.05)
+    goforwardrobot = robotType.GoForwardDynamicRobot(robot, [-6, -2, 0], sensor=IMU)
+    goforwardrobot.update(env, handles)
+    ekf = EKF(goforwardrobot)
+    for ii in range(goforwardDynamicinputs.shape[0]):
+        goforwardrobot.input = goforwardDynamicinputs[ii, :]
+        goforwardrobot.predict(env)
+        goforwardrobot.update(env, handles)
+        ekf.update(env, handles)
+        time.sleep(0.05)
 
 
     raw_input("Press enter to exit...")

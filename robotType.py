@@ -107,7 +107,42 @@ class GoForwardDynamicRobot(Robot):
                           [0, 0,          1        ]])
         self.G = G
 
-    def predict(self):
+    def predict(self, env):
         prediction_noise = random.multivariate_normal((0, 0, 0), self.R)
-        self.state = self.g(self.input, self.state) + prediction_noise
+        # add check collision
+        # self.state = self.g(self.input, self.state) + prediction_noise
+        temp_input = self.input.copy()
+        temp_state = self.g(temp_input, self.state) + prediction_noise
+        T = array([[cos(temp_state[2]), -sin(temp_state[2]), 0, temp_state[0]],
+                   [sin(temp_state[2]), cos(temp_state[2]), 0, temp_state[1]],
+                   [0, 0, 1, 0.05],
+                   [0, 0, 0, 1]])
+        self.robot.SetTransform(T)
+        collision = env.CheckCollision(self.robot)
+        TurnRight = True
+        while collision:
+            if TurnRight:
+                temp_input = array([0, self.input[1]-pi/2])
+            else:
+                temp_input = array([0, self.input[1]+pi/2])
+            temp_state = self.g(temp_input, self.state) + prediction_noise
+            T = array([[cos(temp_state[2]), -sin(temp_state[2]), 0, temp_state[0]],
+                       [sin(temp_state[2]), cos(temp_state[2]), 0, temp_state[1]],
+                       [0, 0, 1, 0.05],
+                       [0, 0, 0, 1]])
+            self.robot.SetTransform(T)
+            if TurnRight:
+                temp_input = array([0.2, self.input[1]+pi/2])
+            else:
+                temp_input = array([0.2, self.input[1]-pi/2])
+            temp_state = self.g(temp_input, temp_state) + prediction_noise
+            T = array([[cos(temp_state[2]), -sin(temp_state[2]), 0, temp_state[0]],
+                       [sin(temp_state[2]), cos(temp_state[2]), 0, temp_state[1]],
+                       [0, 0, 1, 0.05],
+                       [0, 0, 0, 1]])
+            self.robot.SetTransform(T)
+            collision = env.CheckCollision(self.robot)
+            if collision and TurnRight:
+                TurnRight = False
+        self.state = temp_state
 
