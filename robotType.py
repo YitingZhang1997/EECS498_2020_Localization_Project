@@ -61,17 +61,13 @@ class SimpleDynamicRobot(Robot):
                        [0, 0, 0, 1]])
         self.robot.SetTransform(T)
         collision = env.CheckCollision(self.robot)
-        TurnRight = True
+        temp_turn_theta = 0
         while collision:
-            if TurnRight:
-                Rot = array([[0, 1, 0],
-                           [-1, 0, 0],
-                           [0, 0, 1]])
-            else:
-                Rot = array([[0, -1, 0],
-                           [1, 0, 0],
-                           [0, 0, 1]])
-            temp_input = 2 * dot(Rot, self.input)
+            temp_turn_theta += pi/2
+            Rot = array([[cos(temp_turn_theta), sin(temp_turn_theta), 0],
+                        [-sin(temp_turn_theta), cos(temp_turn_theta), 0],
+                        [0, 0, 1]])
+            temp_input = dot(Rot, self.input)
             temp_state = self.state + temp_input + prediction_noise
             T = array([[cos(temp_state[2]), -sin(temp_state[2]), 0, temp_state[0]],
                        [sin(temp_state[2]), cos(temp_state[2]), 0, temp_state[1]],
@@ -79,9 +75,8 @@ class SimpleDynamicRobot(Robot):
                        [0, 0, 0, 1]])
             self.robot.SetTransform(T)
             collision = env.CheckCollision(self.robot)
-            if collision and TurnRight:
-                TurnRight = False
         self.state = temp_state
+        self.input = temp_input
 
 class GoForwardDynamicRobot(Robot):
     ###
@@ -119,30 +114,18 @@ class GoForwardDynamicRobot(Robot):
                    [0, 0, 0, 1]])
         self.robot.SetTransform(T)
         collision = env.CheckCollision(self.robot)
-        TurnRight = True
+        temp_turn_theta = 0
+
         while collision:
-            if TurnRight:
-                temp_input = array([0, self.input[1]-pi/2])
-            else:
-                temp_input = array([0, self.input[1]+pi/2])
+            temp_turn_theta += pi/2
+            temp_input = array([-4*self.input[0], self.input[1]-temp_turn_theta])
             temp_state = self.g(temp_input, self.state) + prediction_noise
             T = array([[cos(temp_state[2]), -sin(temp_state[2]), 0, temp_state[0]],
                        [sin(temp_state[2]), cos(temp_state[2]), 0, temp_state[1]],
                        [0, 0, 1, 0.05],
                        [0, 0, 0, 1]])
             self.robot.SetTransform(T)
-            if TurnRight:
-                temp_input = array([0.2, self.input[1]+pi/2])
-            else:
-                temp_input = array([0.2, self.input[1]-pi/2])
-            temp_state = self.g(temp_input, temp_state) + prediction_noise
-            T = array([[cos(temp_state[2]), -sin(temp_state[2]), 0, temp_state[0]],
-                       [sin(temp_state[2]), cos(temp_state[2]), 0, temp_state[1]],
-                       [0, 0, 1, 0.05],
-                       [0, 0, 0, 1]])
-            self.robot.SetTransform(T)
             collision = env.CheckCollision(self.robot)
-            if collision and TurnRight:
-                TurnRight = False
         self.state = temp_state
+        self.input = temp_input
 
