@@ -31,10 +31,19 @@ class Robot(object):
                                 colors=array(((0,0,1)))))
         ## draw sensor observation trajectory
         self.observation = self.sensor.observe()
-        if self.sensor == GPS or self.sensor == IMU:
+        if type(self.sensor) == GPS or type(self.sensor) == IMU:
             handles.append(env.plot3(points=array([self.observation[0], self.observation[1], 0.05]),
                                     pointsize=1.0,
                                     colors=array(((1,0,0)))))
+        ## update which landMark is working
+        if type(self.sensor) == LandMark:
+            for i in range(self.sensor.n):
+                xl = self.sensor.LandMarkLocation[i, 0]
+                yl = self.sensor.LandMarkLocation[i, 1]
+                handles.append(env.plot3(points=array([xl, yl, 1]),
+                                        pointsize=15.0,
+                                        colors=array(((1,0,0)))))
+
 
 
 
