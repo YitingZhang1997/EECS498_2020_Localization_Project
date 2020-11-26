@@ -80,7 +80,7 @@ class SimpleDynamicRobot(Robot):
             Rot = array([[cos(temp_turn_theta), sin(temp_turn_theta), 0],
                         [-sin(temp_turn_theta), cos(temp_turn_theta), 0],
                         [0, 0, 1]])
-            temp_input = dot(Rot, self.input)
+            temp_input = 4 * dot(Rot, self.input)
             temp_state = self.state + temp_input + prediction_noise
             T = array([[cos(temp_state[2]), -sin(temp_state[2]), 0, temp_state[0]],
                        [sin(temp_state[2]), cos(temp_state[2]), 0, temp_state[1]],
