@@ -152,7 +152,7 @@ class Laser(MySensor):
         self.n = self.sensor.GetSensorData(Sensor.Type.Laser).ranges.shape[0]
         self.Q = eye(self.n)
         for i in range(self.n):
-            self.Q[i, i] = 4.87e-2
+            self.Q[i, i] = 1e-3
 
     def h(self, x):
         '''
@@ -170,9 +170,10 @@ class Laser(MySensor):
                         [0, 0, 0, 1]])
         with self.env:
             self.robot.SetTransform(T_temp)
-            data = self.sensor.GetSensorData(Sensor.Type.Laser)
-            output = sqrt(data.ranges[:, 0]**2 + data.ranges[:, 1]**2)
-        self.robot.SetTransform(T)
+        ## GetSensorData could not written in self.env, unless it won't update
+        data = self.sensor.GetSensorData(Sensor.Type.Laser)
+        output = sqrt(data.ranges[:, 0]**2 + data.ranges[:, 1]**2)
+        # self.robot.SetTransform(T)
         return output
 
     def observe(self):
