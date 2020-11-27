@@ -1,16 +1,17 @@
+
 if not __openravepy_build_doc__:
     from openravepy import *
     from numpy import *
 import math
 
-class Sensor(object):
+class MySensor(object):
     def __init__(self, robot):
         self.robot = robot
 
-class IMU(Sensor):
+class IMU(MySensor):
     ### could return x, y, and theta
-    def __init__(self, robot):
-        Sensor.__init__(self, robot)
+    def __init__(self, robot, env):
+        MySensor.__init__(self, robot)
         self.Q = array([[4.87e-1, -5.86e-3, -5.86e-4], 
                         [-5.86e-3, 4.87e-1, -5.86e-4],
                         [-5.86e-4, -5.86e-4, 4.87e-2]])
@@ -35,10 +36,10 @@ class IMU(Sensor):
         observation = array([T[0, 3], T[1, 3], math.atan2(T[1, 0], T[0, 0]) ]) + observation_noise
         return observation
 
-class GPS(Sensor):
+class GPS(MySensor):
     ### could return x, y
-    def __init__(self, robot):
-        Sensor.__init__(self, robot)
+    def __init__(self, robot, env):
+        MySensor.__init__(self, robot)
         # self.Q = array([[4.87e-1, -5.86e-3, 0],
         #                 [-5.86e-3, 4.87e-1, 0],
         #                 [0, 0, 1]])
@@ -70,20 +71,20 @@ class GPS(Sensor):
         observation = array([T[0, 3], T[1, 3]]) + observation_noise
         return observation
 
-class LandMark(Sensor):
+class LandMark(MySensor):
     '''
     LandMark Sensor, return the direction and distance between robot and landmarks
     '''
-    def __init__(self, robot):
-        Sensor.__init__(self, robot)
+    def __init__(self, robot, env):
+        MySensor.__init__(self, robot)
 
-        self.LandMarkLocation = array([[0, 2.0],
-                                       [4.0, 2.0],
-                                       [4.0, -2.0],
-                                       [0.0, -2.0],
-                                       [-4.0, -2.0],
-                                       [-4.0, 2.0]])
-        # self.LandMarkLocation = array([[4.0, 2.0]])
+        # self.LandMarkLocation = array([[0, 2.0],
+        #                                [4.0, 2.0],
+        #                                [4.0, -2.0],
+        #                                [0.0, -2.0],
+        #                                [-4.0, -2.0],
+        #                                [-4.0, 2.0]])
+        self.LandMarkLocation = array([[4.0, 2.0]])
         self.n = self.LandMarkLocation.shape[0]
         self.Q = eye(2 * self.n)
         for i in range(self.n):
@@ -134,3 +135,54 @@ class LandMark(Sensor):
         # if self.index == self.LandMarkLocation.shape[0]:
         #     self.index = 0
         return observation
+
+class Laser(MySensor):
+    '''
+    define a Laser Sensor class
+    Variables:
+        self.n: the number of the laser beams
+        self.Q: the coevariance matrix of sensor, size [n, n]
+    '''
+    def __init__(self, robot, env):
+        MySensor.__init__(self, robot)
+        self.env = env
+        self.sensor = env.GetSensors()[0]
+        self.sensor.Configure(Sensor.ConfigureCommand.PowerOn)
+        self.sensor.Configure(Sensor.ConfigureCommand.RenderDataOn)
+        self.n = self.sensor.GetSensorData(Sensor.Type.Laser).ranges.shape[0]
+        self.Q = eye(self.n)
+        for i in range(self.n):
+            self.Q[i, i] = 4.87e-2
+
+    def h(self, x):
+        '''
+        return the data given by the laser sensor
+        Input:
+            x: the state of the robot, [x, y, theta]
+        Output:
+            output: distance from the obstacle returned by laser beams in to a verctor
+                    shape [n], [sqrt(x1**2+y1**2), sqrt(x2**2+y2**2) ... sqrt(xn**2+yn**2)]
+        '''
+        T = self.robot.GetTransform()
+        T_temp = array([[cos(x[2]), -sin(x[2]), 0, x[0]],
+                        [sin(x[2]), cos(x[2]), 0, x[1]],
+                        [0, 0, 1, 0.05],
+                        [0, 0, 0, 1]])
+        with self.env:
+            self.robot.SetTransform(T_temp)
+            data = self.sensor.GetSensorData(Sensor.Type.Laser)
+            output = sqrt(data.ranges[:, 0]**2 + data.ranges[:, 1]**2)
+        self.robot.SetTransform(T)
+        return output
+
+    def observe(self):
+        T = self.robot.GetTransform()
+        mean = zeros((self.n,))
+        observation_noise = random.multivariate_normal(mean, self.Q)
+        observation = self.h(array([T[0, 3], T[1, 3], math.atan2(T[1, 0], T[0, 0]) ])) + observation_noise
+        # self.index += 1
+        # if self.index == self.LandMarkLocation.shape[0]:
+        #     self.index = 0
+        return observation
+
+

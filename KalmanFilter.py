@@ -12,13 +12,17 @@ class KF(object):
         self.mu = np.random.rand(3)
         self.Sigma = np.eye(self.mu.size)
 
-    def update(self, env, handles):
+    def update(self, env, handles, DRAWCOR = True):
+        '''
+        DRAWCOR: "True" draw sensor correction
+        '''
         self.mu, self.Sigma = _KalmanFilter(self.mu, self.Sigma,
                                             self.robotType.observation, self.robotType.input,
                                             self.A, self.B, self.C, self.Q, self.R)
-        handles.append(env.plot3(points=np.array([self.mu[0], self.mu[1], 0.05]),
-                                pointsize=4.0,
-                                colors=np.array(((0,1,0)))))
+        if DRAWCOR:
+            handles.append(env.plot3(points=np.array([self.mu[0], self.mu[1], 0.05]),
+                                    pointsize=4.0,
+                                    colors=np.array(((0,1,0)))))
 
 def _KalmanFilter(mu, Sigma, z, u, A, B, C, Q, R):
 
@@ -46,13 +50,17 @@ class EKF(object):
         self.mu = np.random.rand(3)
         self.Sigma = np.eye(self.mu.size)
 
-    def update(self, env, handles):
+    def update(self, env, handles, DRAWCOR = True):
+        '''
+        DRAWCOR: "True" draw sensor correction
+        '''
         self.mu, self.Sigma = _ExtendedKalmanFilter(self.mu, self.Sigma,
                                             self.robotType.observation, self.robotType.input,
                                             self.g, self.G, self.h, self.H, self.Q, self.R)
-        handles.append(env.plot3(points=np.array([self.mu[0], self.mu[1], 0.05]),
-                                pointsize=4.0,
-                                colors=np.array(((0,1,0)))))
+        if DRAWCOR:
+            handles.append(env.plot3(points=np.array([self.mu[0], self.mu[1], 0.05]),
+                                    pointsize=4.0,
+                                    colors=np.array(((0,1,0)))))
 
 def _ExtendedKalmanFilter(mu, Sigma, z, u, g, G, h, H, Q, R):
 

@@ -22,6 +22,7 @@ def tuckarms(env,robot):
 def initRobot(env, robot):
     tuckarms(env,robot)
 
+
 simpleDynamicinputs0 = repeat(array([[0.1, 0, 0]]), 20, axis = 0)
 simpleDynamicinputs1 = repeat(array([[0.1, 0, 0]]), 80, axis = 0)
 simpleDynamicinputs2 = repeat(array([[0, 0.1, 0]]), 60, axis = 0)
