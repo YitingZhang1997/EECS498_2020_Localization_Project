@@ -88,14 +88,17 @@ class PF(object):
          true_observe = self.robotType.observation
          k = true_observe.shape[0]
          Sigma = self.robotType.sensor.Q
+         T = self.robotType.robot.GetTransform()
          for ii in range(M):
-             T = self.robotType.robot.GetTransform()
              particle_observe = self.robotType.sensor.h(self.X[ii,0:3])
              delta = true_observe - particle_observe
              ## the weight should be the probability for particle_observe being oberved as true_observe, giveoise coevariance
              # self.X[ii, 3] = round(1/(sqrt(((2*pi)**k)*linalg.det(Sigma)))*exp(-0.5 * dot(delta.T, linalg.inv(Sigma)).dot(delta)), 8)
-             self.X[ii, 3] = 1/(linalg.norm(delta)**2)
-             self.robotType.robot.SetTransform(T)
+             self.X[ii, 3] = exp(-(linalg.norm(delta)))
+             print(particle_observe)
+             print(exp(-(linalg.norm(delta))))
+             print()
+         self.robotType.robot.SetTransform(T)
 
     def _resample(self):
         ## Low-cariance sampling

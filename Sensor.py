@@ -3,7 +3,7 @@ if not __openravepy_build_doc__:
     from openravepy import *
     from numpy import *
 import math
-
+import time
 class MySensor(object):
     def __init__(self, robot):
         self.robot = robot
@@ -151,8 +151,9 @@ class Laser(MySensor):
         self.sensor.Configure(Sensor.ConfigureCommand.RenderDataOn)
         self.n = self.sensor.GetSensorData(Sensor.Type.Laser).ranges.shape[0]
         self.Q = eye(self.n)
+        self.olddata = 0
         for i in range(self.n):
-            self.Q[i, i] = 1e-3
+            self.Q[i, i] = 1e-2
 
     def h(self, x):
         '''
@@ -168,11 +169,15 @@ class Laser(MySensor):
                         [sin(x[2]), cos(x[2]), 0, x[1]],
                         [0, 0, 1, 0.05],
                         [0, 0, 0, 1]])
-        with self.env:
-            self.robot.SetTransform(T_temp)
+        self.robot.SetTransform(T_temp)
         ## GetSensorData could not written in self.env, unless it won't update
-        data = self.sensor.GetSensorData(Sensor.Type.Laser)
-        output = sqrt(data.ranges[:, 0]**2 + data.ranges[:, 1]**2)
+        while True:
+            data = self.sensor.GetSensorData(Sensor.Type.Laser)
+            if self.olddata == 0 or self.olddata.stamp != data.stamp or (T == T_temp).all():
+                break
+            # time.sleep(0.01)
+        self.olddata = data
+        output = sqrt(data.ranges[:, 0] ** 2 + data.ranges[:, 1] ** 2)
         # self.robot.SetTransform(T)
         return output
 
@@ -180,7 +185,8 @@ class Laser(MySensor):
         T = self.robot.GetTransform()
         mean = zeros((self.n,))
         observation_noise = random.multivariate_normal(mean, self.Q)
-        observation = self.h(array([T[0, 3], T[1, 3], math.atan2(T[1, 0], T[0, 0]) ])) + observation_noise
+        # observation = self.h(array([T[0, 3], T[1, 3], math.atan2(T[1, 0], T[0, 0]) ])) + observation_noise
+        observation = self.h(array([T[0, 3], T[1, 3], math.atan2(T[1, 0], T[0, 0])]))
         # self.index += 1
         # if self.index == self.LandMarkLocation.shape[0]:
         #     self.index = 0

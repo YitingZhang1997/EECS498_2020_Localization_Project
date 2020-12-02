@@ -122,8 +122,8 @@ if __name__ == "__main__":
     goforwardrobot = robotType.GoForwardDynamicRobot(robot, [1, 0, 0], env, sensor=Laser)
     goforwardrobot.update(env, handles)
     pf = PF(goforwardrobot,
-            M = 200, env = env, handles = handles,
-            boundary = array([[0, 5], [-5, 5], [-0.05, 0.05]]))
+            M = 100, env = env, handles = handles,
+            boundary = array([[0, 10], [-0.5, 0.5], [-0.05, 0.05]]))
     for ii in range(goforwardDynamicinputs.shape[0]):
         goforwardrobot.input = goforwardDynamicinputs[ii, :]
         goforwardrobot.predict(env)
