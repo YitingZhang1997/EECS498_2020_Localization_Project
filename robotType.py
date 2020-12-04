@@ -2,9 +2,10 @@ if not __openravepy_build_doc__:
     from openravepy import *
     from numpy import *
 from Sensor import *
+from Astar import Astar
 
 class Robot(object):
-    def __init__(self, robot, state, env, sensor = GPS):
+    def __init__(self, robot, state, env, sensor = GPS, search_alg = Astar):
         ###
         # Class Robot
         # robot is the robot object in openrave
@@ -15,7 +16,8 @@ class Robot(object):
         self.state = array(state)
         self.sensor = sensor(self.robot, env)
         self.observation = self.sensor.observe()
-
+        self.search_alg = search_alg
+        self.env = env
     def update(self, env, handles, DRAWOB = True, DRAWTR = True):
         ###
         # update robot's location in the environment
@@ -44,8 +46,13 @@ class Robot(object):
                 xl = self.sensor.LandMarkLocation[i, 0]
                 yl = self.sensor.LandMarkLocation[i, 1]
                 handles.append(env.plot3(points=array([xl, yl, 1]),
-                                        pointsize=15.0,
+                                        pointsize=10.0,
                                         colors=array(((1,0,0)))))
+    def search_path(self, handles, goalconfig, type = "4-connected"):
+        path = Astar(self.robot,goalconfig,self.env,handles, type)
+        path = flip(path, 0)
+        return path
+
 
 
 
@@ -54,8 +61,8 @@ class SimpleDynamicRobot(Robot):
     ###
     # A simple dynamic robot class
     ###
-    def __init__(self, robot, state, env, sensor = GPS):
-        Robot.__init__(self, robot, state, env, sensor)
+    def __init__(self, robot, state, env, sensor = GPS, search_alg = Astar):
+        Robot.__init__(self, robot, state, env, sensor, search_alg)
         self.input = array([0, 0, 0])
         self.R = array([[2.5e-3, 1.8e-5, 1.8e-6],
                         [1.8e-5, 2.5e-3, 1.8e-6],
@@ -102,13 +109,17 @@ class SimpleDynamicRobot(Robot):
             collision = env.CheckCollision(self.robot)
         self.state = temp_state
         self.input = temp_input
+    def path2input(self, path):
+        input = path[1:,:] - path[0:-1,:]
+        return input
+
 
 class GoForwardDynamicRobot(Robot):
     ###
     # A robot class, could only go directly
     ###
-    def __init__(self, robot, state, env, sensor = GPS):
-        Robot.__init__(self, robot, state, env, sensor)
+    def __init__(self, robot, state, env, sensor = GPS, search_alg = Astar):
+        Robot.__init__(self, robot, state, env, sensor, search_alg)
         self.input = array([0, 0])
         self.R = array([[2.5e-3, 1.8e-5, 1.8e-6],
                         [1.8e-5, 2.5e-3, 1.8e-6],
