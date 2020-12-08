@@ -8,7 +8,7 @@ from KalmanFilter import KF, EKF
 from ParticleFilter import PF
 from Sensor import *
 from Astar import Astar
-
+from PID import *
 
 if not __openravepy_build_doc__:
     from openravepy import *
@@ -109,7 +109,7 @@ if __name__ == "__main__":
     # goforwardrobot.update(env, handles)
     # pf = PF(goforwardrobot,
     #         M = 1000, env = env, handles = handles,
-    #         boundary = array([[-12, 12], [-12, 12]]))
+    #         boundary = array([[-12, 12], [-12, 12]]))fe
     # for ii in range(goforwardDynamicinputs.shape[0]):
     #     goforwardrobot.input = goforwardDynamicinputs[ii, :]
     #     goforwardrobot.predict(env)
@@ -134,44 +134,46 @@ if __name__ == "__main__":
     #######################                  A* search                    ########################
     ######################## Load a simpleDynamicRobot with a GPS sensor  ########################
     ########################          Use KalmanFilter to predict         ########################
+    ########################                 Use PID control              ########################
     # #search path and calculate input
-    # goalconfig =[16, 4, pi/2]
-    # simplerobot = robotType.SimpleDynamicRobot(robot, [1, 0, 0], env, sensor=GPS, search_alg = Astar)
-    # raw_input("Press enter to start searching path...")
-    # print("searching the path......")
-    # searchpath = simplerobot.search_path(handles, goalconfig)
-    # targetinput = simplerobot.path2input(searchpath)
-    #
-    # simplerobot.update(env, handles)
-    # kf = KF(simplerobot)
-    # for ii in range(targetinput.shape[0]):
-    #     simplerobot.input = targetinput[ii, :]
-    #     simplerobot.predict(env)
-    #     simplerobot.update(env, handles)
-    #     kf.update(env, handles)
-    #     time.sleep(0.05)
-
-    #######################                  A* search                    ########################
-    ######################## Load a simpleDynamicRobot with a GPS sensor  ########################
-    ########################               Use PF to predict              ########################
-    #search path and calculate input
-    goalconfig =[16, 0, pi/2]
+    goalconfig =[8, 0, pi/2]
     simplerobot = robotType.SimpleDynamicRobot(robot, [1, 0, 0], env, sensor=GPS, search_alg = Astar)
     raw_input("Press enter to start searching path...")
     print("searching the path......")
     searchpath = simplerobot.search_path(handles, goalconfig)
     targetinput = simplerobot.path2input(searchpath)
-
+    
     simplerobot.update(env, handles)
-    pf = PF(simplerobot,
-            M = 100, env = env, handles = handles,
-            boundary = array([[0, 27], [-10, 10], [-0.05, 0.05]]))
+    kf = KF(simplerobot)
+    pid = PID(searchpath, kp = np.array([5e-2, 5e-2, 0]))
     for ii in range(targetinput.shape[0]):
-        simplerobot.input = targetinput[ii, :]
+        simplerobot.input = targetinput[ii, :] + pid.FeedBack(simplerobot.observation)
         simplerobot.predict(env)
         simplerobot.update(env, handles)
-        pf.update(env, handles)
+        kf.update(env, handles)
         time.sleep(0.05)
+
+    #######################                  A* search                    ########################
+    ######################## Load a simpleDynamicRobot with a GPS sensor  ########################
+    ########################               Use PF to predict              ########################
+    #search path and calculate input
+    # goalconfig =[8, 0, pi/2]
+    # simplerobot = robotType.SimpleDynamicRobot(robot, [1, 0, 0], env, sensor=GPS, search_alg = Astar)
+    # raw_input("Press enter to start searching path...")
+    # print("searching the path......")
+    # searchpath = simplerobot.search_path(handles, goalconfig)
+    # targetinput = simplerobot.path2input(searchpath)
+
+    # simplerobot.update(env, handles)
+    # pf = PF(simplerobot,
+    #         M = 100, env = env, handles = handles,
+    #         boundary = array([[0, 27], [-10, 10], [-0.05, 0.05]]))
+    # for ii in range(targetinput.shape[0]):
+    #     simplerobot.input = targetinput[ii, :]
+    #     simplerobot.predict(env)
+    #     simplerobot.update(env, handles)
+    #     pf.update(env, handles)
+    #     time.sleep(0.05)
 
     raw_input("Press enter to exit...")
     handles = None

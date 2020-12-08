@@ -95,9 +95,9 @@ class PF(object):
              ## the weight should be the probability for particle_observe being oberved as true_observe, giveoise coevariance
              # self.X[ii, 3] = round(1/(sqrt(((2*pi)**k)*linalg.det(Sigma)))*exp(-0.5 * dot(delta.T, linalg.inv(Sigma)).dot(delta)), 8)
              self.X[ii, 3] = exp(-(linalg.norm(delta)))
-             print(particle_observe)
-             print(exp(-(linalg.norm(delta))))
-             print()
+            #  print(particle_observe)
+            #  print(exp(-(linalg.norm(delta))))
+            #  print()
          self.robotType.robot.SetTransform(T)
 
     def _resample(self):
