@@ -38,7 +38,7 @@ class Robot(object):
         self.observation = self.sensor.observe()
         if (type(self.sensor) == GPS or type(self.sensor) == IMU) and DRAWOB:
             handles.append(env.plot3(points=array([self.observation[0], self.observation[1], 0.05]),
-                                    pointsize=1.0,
+                                    pointsize=2.0,
                                     colors=array(((1,0,0)))))
         ## update which landMark is working
         if type(self.sensor) == LandMark:
@@ -93,13 +93,27 @@ class SimpleDynamicRobot(Robot):
                        [0, 0, 0, 1]])
         self.robot.SetTransform(T)
         collision = env.CheckCollision(self.robot)
-        temp_turn_theta = 0
+        # temp_turn_theta = 0
         while collision:
-            temp_turn_theta += pi/2
-            Rot = array([[cos(temp_turn_theta), sin(temp_turn_theta), 0],
-                        [-sin(temp_turn_theta), cos(temp_turn_theta), 0],
-                        [0, 0, 1]])
-            temp_input = 4 * dot(Rot, self.input)
+            # temp_turn_theta += pi/2
+            # Rot = array([[cos(temp_turn_theta), sin(temp_turn_theta), 0],
+            #             [-sin(temp_turn_theta), cos(temp_turn_theta), 0],
+            #             [0, 0, 1]])
+            # temp_input = 4 * dot(Rot, self.input)
+            # temp_state = self.state + temp_input + prediction_noise
+            # T = array([[cos(temp_state[2]), -sin(temp_state[2]), 0, temp_state[0]],
+            #            [sin(temp_state[2]), cos(temp_state[2]), 0, temp_state[1]],
+            #            [0, 0, 1, 0.05],
+            #            [0, 0, 0, 1]])
+            # self.robot.SetTransform(T)
+            # collision = env.CheckCollision(self.robot)
+            '''
+            when collision, just try the input again. 
+            since the input is calculated by A*, in theory the robot would not in collsion.
+            So just try another time, and for the next time, the noise would be different.
+            There would be a noise that could let the robot collision-free
+            '''
+            prediction_noise = random.multivariate_normal((0, 0, 0), self.R)
             temp_state = self.state + temp_input + prediction_noise
             T = array([[cos(temp_state[2]), -sin(temp_state[2]), 0, temp_state[0]],
                        [sin(temp_state[2]), cos(temp_state[2]), 0, temp_state[1]],

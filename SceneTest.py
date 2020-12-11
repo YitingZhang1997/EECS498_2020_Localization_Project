@@ -136,18 +136,18 @@ if __name__ == "__main__":
     ########################          Use KalmanFilter to predict         ########################
     ########################                 Use PID control              ########################
     # #search path and calculate input
-    goalconfig =[8, 0, pi/2]
+    goalconfig =[24, 5, pi/2]
     simplerobot = robotType.SimpleDynamicRobot(robot, [1, 0, 0], env, sensor=GPS, search_alg = Astar)
-    raw_input("Press enter to start searching path...")
+    raw_input("Press enter a position to start searching path...")
     print("searching the path......")
     searchpath = simplerobot.search_path(handles, goalconfig)
     targetinput = simplerobot.path2input(searchpath)
     
     simplerobot.update(env, handles)
     kf = KF(simplerobot)
-    pid = PID(searchpath, kp = np.array([5e-2, 5e-2, 0]))
+    pid = PID(searchpath, kp = np.array([5e-1, 5e-1, 0]), kd = np.array([5e-2, 5e-2, 0]), ki = np.array([5e-2, 5e-2, 0]))
     for ii in range(targetinput.shape[0]):
-        simplerobot.input = targetinput[ii, :] + pid.FeedBack(simplerobot.observation)
+        simplerobot.input = targetinput[ii, :] + pid.FeedBack(kf.mu)
         simplerobot.predict(env)
         simplerobot.update(env, handles)
         kf.update(env, handles)

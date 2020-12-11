@@ -27,7 +27,8 @@ class Node:
         return [self.x, self.y, self.theta]
 
     def f(self, goalconfig):
-        return self.g + _Dis(self, Node(*goalconfig))
+        # return self.g + _Dis(self, Node(*goalconfig))
+        return _Dis(self, Node(*goalconfig))
 
 def _Dis(node1, node2):
     [nx, ny, ntheta] = node1.Configuration()
