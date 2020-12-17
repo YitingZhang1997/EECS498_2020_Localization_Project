@@ -165,13 +165,20 @@ class GoForwardDynamicRobot(Robot):
         temp_turn_theta = 0
 
         while collision:
-            temp_turn_theta += pi/2
+            prediction_noise = random.multivariate_normal((0, 0, 0), self.R)
+            temp_turn_theta += pi
             temp_input = array([-4*self.input[0], self.input[1]-temp_turn_theta])
             temp_state = self.g(temp_input, self.state) + prediction_noise
             T = array([[cos(temp_state[2]), -sin(temp_state[2]), 0, temp_state[0]],
                        [sin(temp_state[2]), cos(temp_state[2]), 0, temp_state[1]],
                        [0, 0, 1, 0.05],
                        [0, 0, 0, 1]])
+            # prediction_noise = random.multivariate_normal((0, 0, 0), self.R)
+            # temp_state = self.g(temp_input, self.state) + prediction_noise
+            # T = array([[cos(temp_state[2]), -sin(temp_state[2]), 0, temp_state[0]],
+            #        [sin(temp_state[2]), cos(temp_state[2]), 0, temp_state[1]],
+            #        [0, 0, 1, 0.05],
+            #        [0, 0, 0, 1]])
             self.robot.SetTransform(T)
             collision = env.CheckCollision(self.robot)
         self.state = temp_state

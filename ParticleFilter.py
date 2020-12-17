@@ -38,6 +38,7 @@ class PF(object):
     def update(self, env, handles):
         self._applyU()
         self._updateWeight()
+        self._reinit()
         self._resample()
         self.clearParticles()
         self._drawParticles()
@@ -94,7 +95,7 @@ class PF(object):
              delta = true_observe - particle_observe
              ## the weight should be the probability for particle_observe being oberved as true_observe, giveoise coevariance
              # self.X[ii, 3] = round(1/(sqrt(((2*pi)**k)*linalg.det(Sigma)))*exp(-0.5 * dot(delta.T, linalg.inv(Sigma)).dot(delta)), 8)
-             self.X[ii, 3] = exp(-(linalg.norm(delta)))
+             self.X[ii, 3] = exp(-(linalg.norm(delta))**2)
             #  print(particle_observe)
             #  print(exp(-(linalg.norm(delta))))
             #  print()
@@ -119,6 +120,10 @@ class PF(object):
                 new_X[num, 3] = 1
                 num += 1
         self.X = new_X
+
+    def _reinit(self):
+        if max(self.X[:,3]) < 1e-3:
+            self.X = self._genParticles(M=self.M, boundary=self.boundary)
 
 
 

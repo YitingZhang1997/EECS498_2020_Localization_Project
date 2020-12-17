@@ -1,5 +1,4 @@
 import time
-import openravepy
 import os
 from init import initRobot
 from init import simpleDynamicinputs, goforwardDynamicinputs
@@ -109,7 +108,7 @@ if __name__ == "__main__":
     # goforwardrobot.update(env, handles)
     # pf = PF(goforwardrobot,
     #         M = 1000, env = env, handles = handles,
-    #         boundary = array([[-12, 12], [-12, 12]]))fe
+    #         boundary = array([[-12, 12], [-12, 12]]))
     # for ii in range(goforwardDynamicinputs.shape[0]):
     #     goforwardrobot.input = goforwardDynamicinputs[ii, :]
     #     goforwardrobot.predict(env)
