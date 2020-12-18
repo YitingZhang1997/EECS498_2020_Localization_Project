@@ -88,10 +88,10 @@ class LandMark(MySensor):
         self.n = self.LandMarkLocation.shape[0]
         self.Q = eye(2 * self.n)
         for i in range(self.n):
-            self.Q[2 * i, 2 * i] = 4.87e-2
+            self.Q[2 * i, 2 * i] = 4.87e-1
             self.Q[2 * i, 2 * i + 1] = -5.86e-3
             self.Q[2 * i + 1, 2 * i] = -5.86e-3
-            self.Q[2 * i + 1, 2 * i + 1] = 4.87e-1
+            self.Q[2 * i + 1, 2 * i + 1] = 4.87e-2
         # ### define which LandMark to use
         # self.index = 0
     def h(self, x):

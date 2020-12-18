@@ -77,44 +77,42 @@ if __name__ == "__main__":
 
     ######################## Load a GoForwardDynamicRobot with a IMU sensor ########################
     ########################            Use EKF to predict DEBUG            ########################
-    # goforwardrobot = robotType.GoForwardDynamicRobot(robot, [-6, -4, 0], env, sensor=IMU)
-    # goforwardrobot.update(env, handles)
-    # ekf = EKF(goforwardrobot)
-    # error = linalg.norm(goforwardrobot.state[0:2] - ekf.mu[0:2])
-    # error_EKF = array([error])
-    # errorOB = linalg.norm(goforwardrobot.state[0:2] - goforwardrobot.observation[0:2])
-    # error_observation =array([errorOB])
-    # track_input = array([[0, 0]])
-    # t = arange(0, goforwardDynamicinputs.shape[0]+1, 1)
-    # for ii in range(goforwardDynamicinputs.shape[0]):
-    #     goforwardrobot.input = goforwardDynamicinputs[ii, :]
-    #     goforwardrobot.predict(env)
-    #     goforwardrobot.update(env, handles)
-    #     ekf.update(env, handles)
-    #     error = linalg.norm(goforwardrobot.state[0:2] - ekf.mu[0:2])
-    #     error_EKF = concatenate((error_EKF, array([error])))
-    #     errorOB = linalg.norm(goforwardrobot.state[0:2] - goforwardrobot.observation[0:2])
-    #     error_observation = concatenate((error_observation, array([errorOB])))
-    #     track_input = concatenate((track_input, array([goforwardrobot.input])), axis=0)
-    #     time.sleep(0.025)
-    # fig, ax = plt.subplots()
-    #
-    # l1 = ax.scatter(t, error_EKF, s=1)
-    # l3 = ax.scatter(t, error_observation, s=1)
-    # ax.set_ylim([-5, 5])
-    # ax.set_xlabel('Iters')
-    # ax.set_ylabel('Error')
-    # ax.set_title('EKF error analysis relate to input(angular velocity)')
-    #
-    # ax1 = ax.twinx()
-    # track_input[track_input[:, 1] < 0, 1] = 0
-    # l2,  = ax1.plot(t, concatenate((array([0]), goforwardDynamicinputs[:, 1]*10)), color="r")
-    # ax1.legend((l1, l3, l2), ('predication_error' , 'observation_error','angular velocity'), loc='upper right')
-    # ax1.set_ylabel('angle velocity(10X)')
-    # ax1.set_ylim([-5, 5])
-    # plt.show()
-    #
-    # aa = 1
+    goforwardrobot = robotType.GoForwardDynamicRobot(robot, [-6, -4, 0], env, sensor=IMU)
+    goforwardrobot.update(env, handles)
+    ekf = EKF(goforwardrobot)
+    error = linalg.norm(goforwardrobot.state[0:2] - ekf.mu[0:2])
+    error_EKF = array([error])
+    errorOB = linalg.norm(goforwardrobot.state[0:2] - goforwardrobot.observation[0:2])
+    error_observation =array([errorOB])
+    track_input = array([[0, 0]])
+    t = arange(0, goforwardDynamicinputs.shape[0]+1, 1)
+    for ii in range(goforwardDynamicinputs.shape[0]):
+        goforwardrobot.input = goforwardDynamicinputs[ii, :]
+        goforwardrobot.predict(env)
+        goforwardrobot.update(env, handles)
+        ekf.update(env, handles)
+        error = linalg.norm(goforwardrobot.state[0:2] - ekf.mu[0:2])
+        error_EKF = concatenate((error_EKF, array([error])))
+        errorOB = linalg.norm(goforwardrobot.state[0:2] - goforwardrobot.observation[0:2])
+        error_observation = concatenate((error_observation, array([errorOB])))
+        track_input = concatenate((track_input, array([goforwardrobot.input])), axis=0)
+        time.sleep(0.025)
+    fig, ax = plt.subplots()
+
+    l1 = ax.scatter(t, error_EKF, s=1)
+    ax.set_ylim([-1, 2])
+    ax.set_xlabel('Iters')
+    ax.set_ylabel('Error')
+
+    ax1 = ax.twinx()
+    track_input[track_input[:, 1] < 0, 1] = 0
+    l2,  = ax1.plot(t, concatenate((array([0]), goforwardDynamicinputs[:, 1]*10)), color="r")
+    ax1.legend((l1, l2), ('predication_error' ,'angular velocity'), loc='upper right')
+    ax1.set_ylabel('angle velocity(10X)')
+    ax1.set_ylim([-1, 2])
+    plt.show()
+
+    aa = 1
 
     ########################  Load a simpleDynamicRobot with a GPS sensor   ########################
     ########################               Use PF to predict                ########################
