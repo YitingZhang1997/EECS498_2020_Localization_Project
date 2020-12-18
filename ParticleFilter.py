@@ -34,6 +34,7 @@ class PF(object):
         self.X = self._genParticles(M = self.M, boundary = self.boundary)
         self.handelDrawIndex = 0
         self._drawParticles()
+        self.mean = self.updatemean()
 
     def update(self, env, handles):
         self._applyU()
@@ -41,6 +42,8 @@ class PF(object):
         self._reinit()
         self._resample()
         self.clearParticles()
+        self.mean = self.updatemean()
+        self.drawpredict()
         self._drawParticles()
 
     def _genParticles(self, M, boundary):
@@ -124,8 +127,15 @@ class PF(object):
     def _reinit(self):
         if max(self.X[:,3]) < 1e-3:
             self.X = self._genParticles(M=self.M, boundary=self.boundary)
-
-
+    def updatemean(self):
+        x = mean(self.X[:,0])
+        y = mean(self.X[:,1])
+        theta = mean(self.X[:,2])
+        return array([x, y, theta])
+    def drawpredict(self):
+        self.handles.append(self.env.plot3(points=array([self.mean[0], self.mean[1], 0.4]),
+                                           pointsize=4.0,
+                                           colors=array(((0, 1, 0)))))
 
 
 

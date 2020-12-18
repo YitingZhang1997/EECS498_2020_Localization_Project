@@ -100,7 +100,7 @@ if __name__ == "__main__":
     print("Sensor: self-defined sensor(GPS-like sensor, but could also sense robot's facing direction)")
     print("Map: obstacles map")
     print("Estimation Algorithm: Particle Filter")
-    print("blue point is the real state, brown point is the particle state, red point is the sensor data")
+    print("blue point is the real state, brown point is the particle state,reen point is the predict state, red point is the sensor data")
     goforwardrobot = robotType.GoForwardDynamicRobot(robot, [-6, -4, 0], env, sensor=IMU)
     goforwardrobot.update(env, handles)
     pf = PF(goforwardrobot,
@@ -170,7 +170,7 @@ if __name__ == "__main__":
     print("Map: obstacles map")
     print("Estimation Algorithm: Particle Filter")
     print("This is the scene EKF could not work properly but Particle Filter could")
-    print("blue point is the real state, brown point is the particle state")
+    print("blue point is the real state, green point is the predict state, brown point is the particle state")
     goforwardrobot = robotType.GoForwardDynamicRobot(robot, [-6, -4, 0], env, sensor=LandMark)
     goforwardrobot.update(env, handles)
     pf = PF(goforwardrobot,

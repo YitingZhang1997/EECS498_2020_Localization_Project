@@ -64,15 +64,15 @@ if __name__ == "__main__":
 
     ######################## Load a GoForwardDynamicRobot with a IMU sensor ########################
     ########################               Use EKF to predict               ########################
-    # goforwardrobot = robotType.GoForwardDynamicRobot(robot, [1, 0, 0], env, sensor=IMU)
-    # goforwardrobot.update(env, handles)
-    # ekf = EKF(goforwardrobot)
-    # for ii in range(goforwardDynamicinputs.shape[0]):
-    #     goforwardrobot.input = goforwardDynamicinputs[ii, :]
-    #     goforwardrobot.predict(env)
-    #     goforwardrobot.update(env, handles)
-    #     ekf.update(env, handles)
-    #     time.sleep(0.025)
+    goforwardrobot = robotType.GoForwardDynamicRobot(robot, [1, 0, 0], env, sensor=IMU)
+    goforwardrobot.update(env, handles)
+    ekf = EKF(goforwardrobot)
+    for ii in range(goforwardDynamicinputs.shape[0]):
+        goforwardrobot.input = goforwardDynamicinputs[ii, :]
+        goforwardrobot.predict(env)
+        goforwardrobot.update(env, handles)
+        ekf.update(env, handles)
+        time.sleep(0.025)
 
     ########################  Load a simpleDynamicRobot with a GPS sensor   ########################
     ########################               Use PF to predict                ########################
@@ -135,22 +135,22 @@ if __name__ == "__main__":
     ########################          Use KalmanFilter to predict         ########################
     ########################                 Use PID control              ########################
     # #search path and calculate input
-    goalconfig =[24, 5, pi/2]
-    simplerobot = robotType.SimpleDynamicRobot(robot, [1, 0, 0], env, sensor=GPS, search_alg = Astar)
-    raw_input("Press enter a position to start searching path...")
-    print("searching the path......")
-    searchpath = simplerobot.search_path(handles, goalconfig)
-    targetinput = simplerobot.path2input(searchpath)
-    
-    simplerobot.update(env, handles)
-    kf = KF(simplerobot)
-    pid = PID(searchpath, kp = np.array([5e-1, 5e-1, 0]), kd = np.array([5e-2, 5e-2, 0]), ki = np.array([5e-2, 5e-2, 0]))
-    for ii in range(targetinput.shape[0]):
-        simplerobot.input = targetinput[ii, :] + pid.FeedBack(kf.mu)
-        simplerobot.predict(env)
-        simplerobot.update(env, handles)
-        kf.update(env, handles)
-        time.sleep(0.05)
+    # goalconfig =[24, 5, pi/2]
+    # simplerobot = robotType.SimpleDynamicRobot(robot, [1, 0, 0], env, sensor=GPS, search_alg = Astar)
+    # raw_input("Press enter a position to start searching path...")
+    # print("searching the path......")
+    # searchpath = simplerobot.search_path(handles, goalconfig)
+    # targetinput = simplerobot.path2input(searchpath)
+    #
+    # simplerobot.update(env, handles)
+    # kf = KF(simplerobot)
+    # pid = PID(searchpath, kp = np.array([5e-1, 5e-1, 0]), kd = np.array([5e-2, 5e-2, 0]), ki = np.array([5e-2, 5e-2, 0]))
+    # for ii in range(targetinput.shape[0]):
+    #     simplerobot.input = targetinput[ii, :] + pid.FeedBack(kf.mu)
+    #     simplerobot.predict(env)
+    #     simplerobot.update(env, handles)
+    #     kf.update(env, handles)
+    #     time.sleep(0.05)
 
     #######################                  A* search                    ########################
     ######################## Load a simpleDynamicRobot with a GPS sensor  ########################
