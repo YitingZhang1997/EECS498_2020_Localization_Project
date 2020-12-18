@@ -36,9 +36,9 @@ if __name__ == "__main__":
     print("Robot Dynamic: simpledynamicrobot")
     print("Sensor: self-defined sensor(GPS-like sensor, but could also sense robot's facing direction)")
     print("Map: empty map")
-    simplerobot = robotType.SimpleDynamicRobot(robot, [-6, -2, 0], env, sensor=GPS)
+    simplerobot = robotType.SimpleDynamicRobot(robot, [-6, 0, 0], env, sensor=GPS)
     simplerobot.update(env, handles)
-    current_point = array([-6., -2., 0.])
+    current_point = array([-6., 0., 0.])
     for ii in range(simpleDynamicinputs.shape[0]):
         handles.append(env.plot3(points=array([current_point[0], current_point[1], 0.05]),
                                  pointsize=4.0,
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     print("Map: obstacles map")
     print("Estimation Algorithm: Particle Filter")
     print("blue point is the real state, brown point is the particle state,reen point is the predict state, red point is the sensor data")
-    goforwardrobot = robotType.GoForwardDynamicRobot(robot, [-6, -4, 0], env, sensor=IMU)
+    goforwardrobot = robotType.GoForwardDynamicRobot(robot, [-6, 0, 0], env, sensor=IMU)
     goforwardrobot.update(env, handles)
     pf = PF(goforwardrobot,
             M = 400, env = env, handles = handles,
@@ -137,7 +137,7 @@ if __name__ == "__main__":
     print("Estimation Algorithm: Extended Kalman Filter")
     print("This is the scene EKF could not work properly, because of highly nonlinearity of only one landmark")
     print("blue point is the real state, green point is the predict state")
-    goforwardrobot = robotType.GoForwardDynamicRobot(robot, [-6, -4, 0], env, sensor=LandMark)
+    goforwardrobot = robotType.GoForwardDynamicRobot(robot, [-6, 0, 0], env, sensor=LandMark)
     goforwardrobot.update(env, handles)
     ekf = EKF(goforwardrobot)
 
@@ -171,10 +171,10 @@ if __name__ == "__main__":
     print("Estimation Algorithm: Particle Filter")
     print("This is the scene EKF could not work properly but Particle Filter could")
     print("blue point is the real state, green point is the predict state, brown point is the particle state")
-    goforwardrobot = robotType.GoForwardDynamicRobot(robot, [-6, -4, 0], env, sensor=LandMark)
+    goforwardrobot = robotType.GoForwardDynamicRobot(robot, [-6, 0, 0], env, sensor=LandMark)
     goforwardrobot.update(env, handles)
     pf = PF(goforwardrobot,
-            M = 400, env = env, handles = handles,
+            M = 800, env = env, handles = handles,
             boundary = array([[-12, 12], [-12, 12], [-math.pi, math.pi]]))
     for ii in range(goforwardDynamicinputs.shape[0]):
         goforwardrobot.input = goforwardDynamicinputs[ii, :]

@@ -12,9 +12,9 @@ class IMU(MySensor):
     ### could return x, y, and theta
     def __init__(self, robot, env):
         MySensor.__init__(self, robot)
-        self.Q = array([[4.87e-1, -5.86e-3, -5.86e-4], 
-                        [-5.86e-3, 4.87e-1, -5.86e-4],
-                        [-5.86e-4, -5.86e-4, 4.87e-2]])
+        self.Q = array([[4.87e-1, -5.86e-3, -5.86e-5],
+                        [-5.86e-3, 4.87e-1, -5.86e-5],
+                        [-5.86e-5, -5.86e-5, 4.87e-3]])
         self.C = array([[1, 0, 0],
                         [0, 1, 0],
                         [0, 0, 1]])

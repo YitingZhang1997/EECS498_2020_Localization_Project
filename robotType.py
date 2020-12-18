@@ -166,8 +166,8 @@ class GoForwardDynamicRobot(Robot):
 
         while collision:
             prediction_noise = random.multivariate_normal((0, 0, 0), self.R)
-            temp_turn_theta += pi
-            temp_input = array([-4*self.input[0], self.input[1]-temp_turn_theta])
+            temp_turn_theta += pi/16
+            temp_input = array([-self.input[0], self.input[1]-temp_turn_theta])
             temp_state = self.g(temp_input, self.state) + prediction_noise
             T = array([[cos(temp_state[2]), -sin(temp_state[2]), 0, temp_state[0]],
                        [sin(temp_state[2]), cos(temp_state[2]), 0, temp_state[1]],
