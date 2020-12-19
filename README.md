@@ -14,4 +14,6 @@ robotType.py: define Robot class, SimpleDynamicRobot class(linear dynamic) and G
 
 Sensor.py: define MySensor class, IMU class, GPS class, LandMark class, Laser class
 
+A demo video is on YouTube: https://youtu.be/7leqaoQSd64
+
 Author: Yiting Zhang ,Huijie Zhang
